@@ -7,7 +7,6 @@ let operationType = '';
 let isPercent = false;
 let isEqual = false;
 
-
 calculator.addEventListener('click', (event) => {
     const target = event.target;
     if (target.classList.contains('calculator__col')) {
