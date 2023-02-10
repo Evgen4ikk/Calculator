@@ -1,4 +1,6 @@
 const calculator = document.querySelector('.calculator');
+const calculatorClearBlock = document.getElementById('calculator-clear');
+let allHistory = [];
 let history = [];
 let tempNumber = '';
 let operationType = '';
@@ -10,14 +12,20 @@ calculator.addEventListener('click', (event) => {
     const target = event.target;
     if (target.classList.contains('calculator__col')) {
         const data = target.dataset.type;
+        const totalBlock = calculator.querySelector('.calculator__total');
+        const historyBlock = calculator.querySelector('.calculator__history');
         operationTypeHandling(data);
-        renderTotal(tempNumber);
-        renderHistory(history);
+        totalBlock.innerHTML = tempNumber;
+        historyBlock.innerHTML = renderHistory(history);
+        historyPanelRender(allHistory);
     }
 })
 
 // Обработка нажатых клавишь на калькуляторе
 function operationTypeHandling(data) {
+    if (data !== 'clear' && data !== 'history') {
+        calculatorClearBlock.innerHTML = 'C';
+    }
     if (data >= 0) {
         operationType = 'number';
         tempNumber = tempNumber === '0' ? data : tempNumber + data;
@@ -43,31 +51,36 @@ function operationTypeHandling(data) {
         history = [];
         tempNumber = '0';
         isPercent = false;
+        if (calculatorClearBlock.innerText === 'C'){
+            calculatorClearBlock.innerHTML = 'CA'
+        } else {
+            calculatorClearBlock.innerHTML = 'C';
+            allHistory = [];
+        }
     } else if (data === '%') {
         history.push(tempNumber);
         isPercent = true;
         isEqual = false;
         tempNumber = calculate(history, isPercent, isEqual);
     } else if (data === '=') {
+        const historySegment = [];
         if (!isPercent) {
             history.push(tempNumber);
         }
+        historySegment.push(history);
         isEqual = true;
         tempNumber = calculate(history, isPercent, isEqual);
+        historySegment.push(tempNumber);
+        allHistory.push(historySegment);
         history = [];
         isPercent = false;
+    } else if (data === 'history'){
+        openHistoryPanel();
     }
-}
-
-//Отрисовка текущего значения на экране калькулятора
-function renderTotal(value) {
-    const totalBlock = calculator.querySelector('.calculator__total');
-    totalBlock.innerHTML = value;
 }
 
 // формирование HTML кода и вывод истории операций
 function renderHistory(historyArray) {
-    const historyBlock = calculator.querySelector('.calculator__history');
     let htmlElements = '';
     historyArray.forEach((item) => {
         if (item >= 0) {
@@ -81,9 +94,26 @@ function renderHistory(historyArray) {
             htmlElements = htmlElements + `&nbsp;<strong>${item}</strong>`;
         }
     })
-    historyBlock.innerHTML = htmlElements;
+    return htmlElements;
 }
 
+// Отрисовка всей истории в панели
+function historyPanelRender (allHistory){
+    let historyPanelHtml = '';
+    const historyContent = document.getElementById('history-content');
+    allHistory.forEach((item) => {
+        const html = `
+            <div>
+                <div class="calculator__history">
+                    ${renderHistory(item[0])}
+                </div>
+                <div class="calculator__total">${item[1]}</div>
+            </div>`
+
+        historyPanelHtml = historyPanelHtml + html
+    })
+    historyContent.innerHTML = historyPanelHtml;
+}
 
 // подсчет конечного значения
 function calculate(historyArray, isPercent, isEqual) {
@@ -162,4 +192,23 @@ theme.onclick = () =>{
         theme.classList.add('theme_dark');   
         calculator.classList.remove('calculator_dark')  
     }
+}
+
+
+
+// Открытие панели истори
+const historyPanel = document.getElementById('history-panel');
+const closeHistoryBtn = historyPanel.querySelector('#close');
+
+
+closeHistoryBtn.onclick = ()=>{
+        historyPanel.classList.remove('open');
+
+}
+
+
+// Открытие панели истории
+function openHistoryPanel (){
+    historyPanel.classList.add('open');
+
 }

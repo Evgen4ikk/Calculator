@@ -109,6 +109,16 @@ body{
     background-color: var(--actions_dark);
 }
 
+.calculator_dark .calculator__history-panel{
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+.calculator_dark .calculator__history-close {
+    background-color: var(--dark);
+}
+
+
 /* theme */
 .theme{
     cursor: pointer;
@@ -137,3 +147,49 @@ body{
     margin-left: -20px;
 }
 
+/* All history */
+
+.calculator__history-panel{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background-color: var(--light);
+    color: var(--dark);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px 24px;
+    flex-direction: column;
+    transition: var(--transition);
+}
+
+.calculator__history-panel.open{
+    top: 0;
+}
+
+.calculator__history-close{
+    position: absolute;
+    --size: 20px;
+    cursor: pointer;
+    top: 16px;
+    left: 16px;
+    font-size: calc(var(--size)/ 1.4);
+    line-height: calc(var(--size)/ 1.1);
+    width: var(--size);
+    height: var(--size);
+    border-radius: var(--size);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    text-align: center;
+    background-color: var(--light);
+}
+
+.calculator__history-content > div:not(:last-child){
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+}
+
+.calculator__history-content {
+    text-align: right;
+}
